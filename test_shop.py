@@ -40,6 +40,7 @@ class TestProducts:
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
         with pytest.raises(ValueError):
             product.buy(1001)
+            assert pytest.raises(ValueError)
 
 
 class TestCart:
@@ -60,19 +61,25 @@ class TestCart:
 
     def test_remove_product_with_quantity(self, product, cart):
         cart.add_product(product, 100)
-        cart.remove_product(product, 10)
-        assert cart.products.get(product, None) == 90
+        cart.remove_product(product)
+        assert cart.products.get(product, None) is None
 
     def test_remove_product_more_available(self, cart, product):
         cart.add_product(product, 1000)
-        assert cart.remove_product(product, 1001) is None
+        cart.remove_product(product, 1001)
+        assert cart.products.get(product, None) is None
 
     def test_remove_product_nothing(self, product, cart):
         with pytest.raises(ValueError):
             cart.remove_product(product)
 
+    def test_remove_product_part(self, cart, product):
+        cart.add_product(product, 500)
+        cart.remove_product(product, 100)
+        assert cart.products.get(product, None) == 400
+
     def test_clear(self, product, cart):
-        cart.add_product(product, 5)
+        cart.add_product(product)
         cart.clear()
         assert cart.products == {}
 
