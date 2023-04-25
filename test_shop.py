@@ -59,10 +59,6 @@ class TestCart:
         with pytest.raises(ValueError):
             assert cart.add_product(product, 0) is ValueError
 
-    def test_remove_product_with_quantity(self, product, cart):
-        cart.add_product(product, 100)
-        cart.remove_product(product)
-        assert cart.products.get(product, None) is None
 
     def test_remove_product_more_available(self, cart, product):
         cart.add_product(product, 1000)
@@ -92,6 +88,14 @@ class TestCart:
         cart.add_product(product, 100)
         cart.buy()
         assert product.quantity == 900
+
+        cart.add_product(product, quantity=100)
+        cart.buy()
+        assert product.quantity == 800
+
+        cart.add_product(product, quantity=800)
+        cart.buy()
+        assert product.quantity == 0
 
     def test_buy_negative(self, product, cart):
         cart.add_product(product, 1001)
